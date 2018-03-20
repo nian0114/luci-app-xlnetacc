@@ -93,9 +93,7 @@ clean_log() {
 
 # 获取接口IP地址
 get_bind_ip() {
-	json_cleanup; json_load "$(ubus call network.interface.$network status 2> /dev/null)" >/dev/null 2>&1
-	json_select "ipv4-address" >/dev/null 2>&1; json_select 1 >/dev/null 2>&1
-	json_get_var _bind_ip "address"
+	_bind_ip=`curl http://members.3322.org/dyndns/getip`
 	if [ -z "$_bind_ip" -o "$_bind_ip"x == "0.0.0.0"x ]; then
 		_log "获取网络 $network IP地址失败"
 		return 1
@@ -108,7 +106,6 @@ get_bind_ip() {
 # 定义基本 HTTP 命令和参数
 gen_http_cmd() {
 	_http_cmd="wget-ssl -nv -t 1 -T 5 -O - --no-check-certificate"
-	_http_cmd="$_http_cmd --bind-address=$_bind_ip"
 }
 
 # 生成设备标识
